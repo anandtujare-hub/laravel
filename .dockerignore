@@ -1,0 +1,66 @@
+# ----------------------------------
+# Git
+# ----------------------------------
+.git
+.gitignore
+
+# ----------------------------------
+# Node / Frontend
+# ----------------------------------
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+dist
+.build
+.vite
+
+# ----------------------------------
+# PHP / Laravel
+# ----------------------------------
+vendor
+storage/*.key
+storage/logs
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+
+# ----------------------------------
+# Environment files
+# ----------------------------------
+.env
+.env.*
+!.env.example
+
+# ----------------------------------
+# Docker
+# ----------------------------------
+docker-compose.yml
+compose.*.yaml
+docker/**/*.log
+
+# ----------------------------------
+# OS / Editor
+# ----------------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea
+.vscode
+
+# ----------------------------------
+# Tests & Coverage
+# ----------------------------------
+coverage
+.phpunit.result.cache
+
+# ----------------------------------
+# Archives / temp
+# ----------------------------------
+*.tar
+*.zip
+*.gz
+*.log
+tmp
+temp
