@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     git \
     sudo \
+    ca-certificates \
+    gnupg \
     libpq-dev \
     libonig-dev \
     libssl-dev \
@@ -27,11 +29,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         intl \
         zip \
         bcmath \
-        soap \
-    && rm -rf /var/lib/apt/lists/*
+        soap
 
 # -------------------------------------------------
-# PECL extensions (isolated for reliability)
+# Node.js (system-wide, NO NVM)
+# -------------------------------------------------
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm@latest
+
+# -------------------------------------------------
+# PECL extensions
 # -------------------------------------------------
 RUN pecl install redis \
     && docker-php-ext-enable redis
@@ -48,30 +56,21 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
     --filename=composer
 
 # -------------------------------------------------
-# User setup (matches host UID/GID)
+# Cleanup
+# -------------------------------------------------
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# -------------------------------------------------
+# User
 # -------------------------------------------------
 RUN groupadd -g ${GID} www \
     && useradd -m -u ${UID} -g www -s /bin/bash www \
     && usermod -aG sudo www \
     && echo "www ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# -------------------------------------------------
-# Switch user
-# -------------------------------------------------
 USER www
 WORKDIR /var/www
-
-# -------------------------------------------------
-# NVM + Node.js
-# -------------------------------------------------
-RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash \
-    && export NVM_DIR="$HOME/.nvm" \
-    && . "$NVM_DIR/nvm.sh" \
-    && nvm install ${NODE_VERSION} \
-    && nvm alias default ${NODE_VERSION}
-
-RUN echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc \
-    && echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' >> ~/.bashrc
 
 ENTRYPOINT []
 CMD ["bash"]
